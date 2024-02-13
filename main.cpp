@@ -29,7 +29,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{320.0f,960.0f},
 		{0.0f,0.0f},
 		{0.0f,0.0f},
-		0.0f,
+		1.0f,
 		10.0f,
 		WHITE
 	};
@@ -70,7 +70,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			Vector2 airResistance = { k * -ball.Velocity.x,k * -ball.Velocity.y };
 
-			Vector2 airResistanceAcceleration = { airResistance.y / ball.mass };
+			Vector2 airResistanceAcceleration = {0, airResistance.y / ball.mass };
 
 			ball.acceleration.y = gravity + airResistanceAcceleration.y;
 
@@ -82,20 +82,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ball.Velocity.y += (ball.acceleration.y / 60.0f);
 
-		ball.position.y += (ball.Velocity.y / 60.0f);
+		ball.position.y += (ball.Velocity.y/60.0f);
 
 
 		//空気抵抗なし
-		ball2.Velocity.x += ball2.acceleration.x / 60.0f;
 		ball2.Velocity.y += ball2.acceleration.y / 60.0f;
 
-		ball2.position.x += ball2.Velocity.x/ 60.0f;
-		ball2.position.y += ball2.Velocity.y/ 60.0f;
+		ball2.position.y += ball2.Velocity.y / 60.0f;
 
-		///レンダリングパイプラインの処理
+		//=====================================レンダリングパイプライン処理 ここから=========================================
+
 		Matrix3x3 cameraWorldMatrix = MakeAffineMatrix({ 1.0f,1.0f }, 0.0f,{ 240.0f,480.0f });
 
 		Matrix3x3 worldMatrix = MakeAffineMatrix(Scale, theta, ball.position);
+
 		Matrix3x3 worldMatrix2 = MakeAffineMatrix(Scale2, theta2, ball2.position);
 
 		Matrix3x3 viewMatrix = InverseMatrix(cameraWorldMatrix);
@@ -105,9 +105,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix3x3 ViewportMatrix = MakeViewportMatrix(0, 0, 480.0f, 960.0f);
 
 		Matrix3x3 vpVpMatirx = Multiply(viewMatrix, OrthoMatrix);
+
 		vpVpMatirx = Multiply(vpVpMatirx, ViewportMatrix);
+
 		Matrix3x3 wvpVpMatrix = Multiply(worldMatrix, vpVpMatirx);
+
 		Matrix3x3 wvpVpMatrix2 = Multiply(worldMatrix2, vpVpMatirx);
+
+		//=====================================レンダリングパイプライン処理 ここまで=========================================
 
 		///
 		/// ↑更新処理ここまで
